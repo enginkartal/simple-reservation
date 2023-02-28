@@ -51,7 +51,7 @@ RUN mkdir /var/log/php
 RUN touch /var/log/php/errors.log && chmod 777 /var/log/php/errors.log
 
 # Deployment steps
-RUN composer install --optimize-autoloader --no-dev
+RUN composer install --optimize-autoloader
 
 EXPOSE 9000
 CMD ["php-fpm"]

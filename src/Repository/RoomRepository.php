@@ -68,13 +68,12 @@ class RoomRepository extends ServiceEntityRepository
         return $availableRooms;
     }
 
-//    public function findOneBySomeField($value): ?Room
-//    {
-//        return $this->createQueryBuilder('r')
-//            ->andWhere('r.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->getQuery()
-//            ->getOneOrNullResult()
-//        ;
-//    }
+    public function findOneByRoomId($roomId): ?array
+    {
+        return $this->createQueryBuilder('r')
+            ->andWhere('r.id = :val')
+            ->setParameter('val', $roomId)
+            ->getQuery()
+            ->getArrayResult();
+    }
 }

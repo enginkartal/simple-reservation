@@ -87,4 +87,25 @@ class RoomController extends AbstractController
         return $this->successNormalizer->success($availableRooms, 200);
     }
 
+    /**
+     * Get the room.
+     *
+     * This call takes avalaible rooms.
+     * @throws ExceptionInterface
+     */
+    #[Route('/rooms/{id}', methods: ['GET'])]
+    #[OA\Response(
+        response: 200,
+        description: 'Return the room'
+    )]
+    #[OA\Tag(name: 'rooms')]
+    public function show(Request $request,ValidatorInterface $validator,RoomRepository $roomRepository,int $id): JsonResponse
+    {
+        $room = $roomRepository->findOneByRoomId($id);
+        if (empty($room)) {
+            return $this->errorNormalizer->error("Room not found", 404);
+        }
+        return $this->successNormalizer->success($room[0], 200);
+    }
+
 }

@@ -46,9 +46,10 @@ php bin/console doctrine:fixtures:load
 
 ## Endpoint List
 
-| Method | Endpoint      |
-|--------|---------------|
-| GET    | /api/v1/rooms |
+| Method | Endpoint           |
+|--------|--------------------|
+| GET    | /api/v1/rooms?check_in=2023-03-09&check_out=2024-03-23&guest=1      |
+| GET    | /api/v1/rooms/{id} |
 
 
 ## Swagger API Doc

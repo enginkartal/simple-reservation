@@ -4,6 +4,7 @@ namespace App\Repository;
 
 use App\Entity\Room;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -39,20 +40,33 @@ class RoomRepository extends ServiceEntityRepository
         }
     }
 
-//    /**
-//     * @return Room[] Returns an array of Room objects
-//     */
-//    public function findByExampleField($value): array
-//    {
-//        return $this->createQueryBuilder('r')
-//            ->andWhere('r.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->orderBy('r.id', 'ASC')
-//            ->setMaxResults(10)
-//            ->getQuery()
-//            ->getResult()
-//        ;
-//    }
+    /**
+     * @return Room[] Returns an array of Room objects
+     */
+    public function findAvailableRooms(Room $entity): ?array
+    {
+        $qbReservations = $this->_em->createQueryBuilder();
+        $qbReservations->select('r.room_id')
+            ->from('App\Entity\Reservation', 'r')
+            ->where('(r.check_in >= :check_in or r.check_out > :check_in) and (r.check_out < :check_out or r.check_in < :check_out)')
+            ->setParameter('check_in', $entity->getCheckIn())
+            ->setParameter('check_out', $entity->getCheckOut())
+            ->orderBy('r.id', 'ASC');
+
+        $qbRooms = $this->_em->createQueryBuilder();
+        $availableRoomsQuery = $qbRooms->select('rr')
+            ->from('App\Entity\Room', 'rr')
+            ->where('rr.available = 1 and  rr.capacity >= :guest')
+            ->andWhere($qbRooms->expr()->notIn('rr.id', $qbReservations->getDQL()))
+            ->orderBy('rr.id', 'ASC');
+
+        $availableRoomsQuery->setParameter('check_in', $entity->getCheckIn());
+        $availableRoomsQuery->setParameter('check_out', $entity->getCheckOut());
+        $availableRoomsQuery->setParameter('guest', $entity->getGuest());
+        $availableRooms = $availableRoomsQuery->getQuery()->getArrayResult();
+
+        return $availableRooms;
+    }
 
 //    public function findOneBySomeField($value): ?Room
 //    {

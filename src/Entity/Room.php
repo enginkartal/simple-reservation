@@ -32,6 +32,12 @@ class Room
     #[ORM\Column(nullable: true)]
     private ?bool $available = null;
 
+    private ?string $checkIn = null;
+
+    private ?string $checkOut = null;
+
+    private ?int $guest = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -105,6 +111,42 @@ class Room
     public function setAvailable(?bool $available): self
     {
         $this->available = $available;
+
+        return $this;
+    }
+
+    public function getCheckIn(): ?string
+    {
+        return $this->checkIn;
+    }
+
+    public function setCheckIn(?string $checkIn): self
+    {
+        $this->checkIn = $checkIn;
+
+        return $this;
+    }
+
+    public function getCheckOut(): ?string
+    {
+        return $this->checkOut;
+    }
+
+    public function setCheckOut(?string $checkOut): self
+    {
+        $this->checkOut = $checkOut;
+
+        return $this;
+    }
+
+    public function getGuest(): ?int
+    {
+        return $this->guest;
+    }
+
+    public function setGuest(int $guest): self
+    {
+        $this->guest = $guest;
 
         return $this;
     }

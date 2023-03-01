@@ -20,8 +20,6 @@ composer install
 
 php bin/console doctrine:database:create
 
-php bin/console make:migration
-
 php bin/console doctrine:migrations:migrate
 
 php bin/console doctrine:fixtures:load
@@ -39,8 +37,6 @@ php  test
 ```
 php bin/console doctrine:database:create
 
-php bin/console make:migration
-
 php bin/console doctrine:migrations:migrate
 
 php bin/console doctrine:fixtures:load
@@ -50,20 +46,20 @@ php bin/console doctrine:fixtures:load
 
 ## Endpoint List
 
-| Method | Endpoint             |
-|--------|----------------------|
-| GET    | /api/v1/reservations |
+| Method | Endpoint      |
+|--------|---------------|
+| GET    | /api/v1/rooms |
 
 
 ## Swagger API Doc
 
 ```
-http://127.0.0.1:9100/api/documentation
+http://127.0.0.1:9100/api/doc
 ```
 
 ## Postman Collection
 
-api.postman_collection.json
+missafir.postman_collection.json
 
 ```
 

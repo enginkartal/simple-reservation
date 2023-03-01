@@ -1,0 +1,52 @@
+{
+	"info": {
+		"_postman_id": "c0020e00-cf4e-474f-b2d5-7a5611bf3a42",
+		"name": "missafir",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "1153550"
+	},
+	"item": [
+		{
+			"name": "Rooms",
+			"item": [
+				{
+					"name": "rooms",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "127.0.0.1:8000/api/v1/rooms?check_in=2023-03-09&check_out=2024-03-23&guest=1",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"v1",
+								"rooms"
+							],
+							"query": [
+								{
+									"key": "check_in",
+									"value": "2023-03-09"
+								},
+								{
+									"key": "check_out",
+									"value": "2024-03-23"
+								},
+								{
+									"key": "guest",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}

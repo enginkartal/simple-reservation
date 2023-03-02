@@ -16,6 +16,8 @@ use Nelmio\ApiDocBundle\Annotation\Security;
 use OpenApi\Attributes as OA;
 use App\Serializer\ErrorResponseNormalizer as ErrorNormalizer;
 use App\Serializer\SuccessResponseNormalizer as SuccessNormalizer;
+use Predis\Client;
+
 
 #[Route('/api/v1', name: 'api_')]
 class ReservationController extends AbstractController
@@ -23,8 +25,11 @@ class ReservationController extends AbstractController
     private ErrorNormalizer $errorNormalizer;
     private SuccessNormalizer $successNormalizer;
 
+    private Client $redis;
+
     public function __construct()
     {
+        $this->redis = new Client();
         $this->errorNormalizer = new ErrorNormalizer();
         $this->successNormalizer = new SuccessNormalizer();
     }
@@ -120,10 +125,17 @@ class ReservationController extends AbstractController
     #[OA\Tag(name: 'reservations')]
     public function show(Request $request, ValidatorInterface $validator, ReservationRepository $reservationRepository, string $ref): JsonResponse
     {
+
+        if($this->redis->exists($ref)) {
+            return $this->successNormalizer->success(json_decode($this->redis->get($ref), true), 200);
+        }
+
         $reservation = $reservationRepository->findReservationByRef($ref);
         if (empty($reservation)) {
             return $this->errorNormalizer->error("No reservation available", 404);
         }
+
+        $this->redis->set($ref, json_encode($reservation));
 
         return $this->successNormalizer->success($reservation, 200);
     }
@@ -145,6 +157,8 @@ class ReservationController extends AbstractController
         }
 
         $reservationRepository->remove($reservation, true);
+
+        $this->redis->del($ref);
 
         return $this->successNormalizer->success(['message' => 'Successful deleted'], 200);
     }

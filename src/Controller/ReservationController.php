@@ -28,7 +28,7 @@ class ReservationController extends AbstractController
         $this->successNormalizer = new SuccessNormalizer();
     }
 
-    #[Route('/reservations', name: 'reservations.get', methods: ['GET'])]
+    #[Route('/reservations', name: 'reservations.gets', methods: ['GET'])]
     #[OA\Tag(name: 'reservations')]
     public function index(Request $request, ValidatorInterface $validator, ReservationRepository $reservationRepository): JsonResponse
     {
@@ -106,8 +106,25 @@ class ReservationController extends AbstractController
         $reservation->setAmount($data['amount']);
         $reservation->setCreatedAt(new \DateTime());
 
-        $reservationRepository->save($reservation,true);
+        $reservationRepository->save($reservation, true);
 
         return $this->successNormalizer->success(['ref' => $ref, 'message' => 'Successful created'], 201);
     }
+
+    #[Route('/reservations/{ref}', name: 'reservations.get', methods: ['GET'])]
+    #[OA\Response(
+        response: 200,
+        description: 'Return the reservation'
+    )]
+    #[OA\Tag(name: 'reservations')]
+    public function show(Request $request, ValidatorInterface $validator, ReservationRepository $reservationRepository, string $ref): JsonResponse
+    {
+        $reservation = $reservationRepository->findReservationByRef($ref);
+        if (empty($reservation)) {
+            return $this->errorNormalizer->error("No reservation available", 404);
+        }
+
+        return $this->successNormalizer->success($reservation, 200);
+    }
+
 }

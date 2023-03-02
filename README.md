@@ -43,11 +43,14 @@ php bin/console doctrine:fixtures:load
 
 ## Endpoint List
 
-| Method | Endpoint                                                       |
-|--------|----------------------------------------------------------------|
+| Method | Endpoint                                                   |
+|--------|------------------------------------------------------------|
 | GET    | /api/v1/rooms?check_in=2023-03-09&check_out=2024-03-23&guest=1 |
-| GET    | /api/v1/rooms/{id}                                             |
-| GET    | /api/v1/reservations                                      |
+| GET    | /api/v1/rooms/{id}                                         |
+| GET    | /api/v1/reservations                                       |
+| GET    | /api/v1/reservations/{ref}                                 |
+| POST   | /api/v1/reservations                                       |
+| DELETE | /api/v1/reservations/{ref}                                       |
 
 
 ## OpenApi (Swagger) API Doc

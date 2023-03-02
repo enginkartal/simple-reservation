@@ -62,13 +62,14 @@ class ReservationRepository extends ServiceEntityRepository
 //        ;
 //    }
 
-//    public function findOneBySomeField($value): ?Reservation
-//    {
-//        return $this->createQueryBuilder('r')
-//            ->andWhere('r.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->getQuery()
-//            ->getOneOrNullResult()
-//        ;
-//    }
+    public function findReservationByRef($ref): ?array
+    {
+        return $this->createQueryBuilder('r')
+            ->select('r.id, r.ref, r.customer_id, r.room_id,DATE_FORMAT(r.check_in,\'%Y-%m-%d\') check_in, DATE_FORMAT(r.check_out,\'%Y-%m-%d\') check_out, r.amount, r.created_at')
+            ->andWhere('r.ref = :val')
+            ->setParameter('val', $ref)
+            ->getQuery()
+            ->getArrayResult()
+        ;
+    }
 }

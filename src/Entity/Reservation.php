@@ -5,6 +5,8 @@ namespace App\Entity;
 use App\Repository\ReservationRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Component\Validator\Mapping\ClassMetadata;
 
 #[ORM\Entity(repositoryClass: ReservationRepository::class)]
 class Reservation
@@ -21,7 +23,7 @@ class Reservation
     private ?int $customer_id = null;
 
     #[ORM\Column]
-    private ?int $room_id = null;
+    private int $room_id;
 
     #[ORM\Column(type: Types::DATE_MUTABLE)]
     private ?\DateTimeInterface $check_in = null;
@@ -64,7 +66,7 @@ class Reservation
         return $this;
     }
 
-    public function getRoomId(): ?int
+    public function getRoomId(): int
     {
         return $this->room_id;
     }
@@ -122,5 +124,15 @@ class Reservation
         $this->created_at = $created_at->format('Y-m-d H:i:s');
 
         return $this;
+    }
+
+    public static function loadValidatorMetadata(ClassMetadata $metadata)
+    {
+        $metadata->addPropertyConstraint('customer_id', new Assert\Positive());
+        $metadata->addPropertyConstraint('room_id', new Assert\Positive());
+        $metadata->addPropertyConstraint('check_in', new Assert\Date());
+        $metadata->addPropertyConstraint('check_out', new Assert\Blank());
+        $metadata->addPropertyConstraint('check_out', new Assert\Date());
+        $metadata->addPropertyConstraint('amount', new Assert\Positive());
     }
 }

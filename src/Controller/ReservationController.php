@@ -28,9 +28,9 @@ class ReservationController extends AbstractController
         $this->successNormalizer = new SuccessNormalizer();
     }
 
-    #[Route('/reservations', name: 'reservations', methods: ['GET'])]
+    #[Route('/reservations', name: 'reservations.get', methods: ['GET'])]
     #[OA\Tag(name: 'reservations')]
-    public function index(Request $request,ValidatorInterface $validator,ReservationRepository $reservationRepository ): JsonResponse
+    public function index(Request $request, ValidatorInterface $validator, ReservationRepository $reservationRepository): JsonResponse
     {
 
         $reservations = $reservationRepository->findAllReservations();
@@ -40,5 +40,74 @@ class ReservationController extends AbstractController
         }
 
         return $this->successNormalizer->success($reservations, 200);
+    }
+
+    #[Route('/reservations', name: 'reservations.post', methods: ['POST'])]
+    #[OA\RequestBody(
+        description: 'New Reservation',
+        required: true,
+        content: array(
+            new OA\MediaType(
+                mediaType: 'application/json',
+                schema: new OA\Schema(
+                    properties: array(
+                        new OA\Property(
+                            property: 'customer_id',
+                            description: 'The customer ID',
+                            type: 'integer'
+                        ),
+                        new OA\Property(
+                            property: 'room_id',
+                            description: 'The room ID',
+                            type: 'integer'
+                        ),
+                        new OA\Property(
+                            property: 'check_in',
+                            description: 'The check_in date',
+                            type: 'date'
+                        ),
+                        new OA\Property(
+                            property: 'check_out',
+                            description: 'The check_out date',
+                            type: 'date'
+                        ),
+                        new OA\Property(
+                            property: 'amount',
+                            description: 'The amount',
+                            type: 'integer'
+                        ),
+                    ),
+                    type: 'object',
+                )
+            )
+        ),
+    )]
+    #[OA\Tag(name: 'reservations')]
+    public function create(Request $request, ValidatorInterface $validator, ReservationRepository $reservationRepository): JsonResponse
+    {
+
+        $reservation = new Reservation();
+        $errors = $validator->validate($reservation);
+
+        if (count($errors) > 0) {
+            return $this->errorNormalizer->error((string)$errors, 400);
+        }
+
+        $data = json_decode($request->getContent(), true);
+        $ref = 'REF_' . rand(1, 99999);
+        $checkIn = new \DateTime($data['check_in']);
+        $checkOut = new \DateTime($data['check_out']);
+
+        $reservation->setRef($ref);
+        $reservation->setCustomerId($data['customer_id']);
+        $reservation->setRoomId($data['room_id']);
+        $reservation->setCheckIn($checkIn);
+        $reservation->setCheckOut($checkOut);
+        $reservation->setAmount($data['amount']);
+        $reservation->setCreatedAt(new \DateTime());
+
+        $reservationRepository->save($reservation,true);
+
+        return $this->successNormalizer->success(['ref' => $ref, 'message' => 'Successful created'], 201);
     }
 }

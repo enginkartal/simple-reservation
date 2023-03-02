@@ -42,6 +42,11 @@ class Reservation
         return $this->id;
     }
 
+    public function setId(int $id): ?int
+    {
+        return $this->id = $id;
+    }
+
     public function getRef(): ?string
     {
         return $this->ref;

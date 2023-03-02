@@ -9,6 +9,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Serializer\Exception\ExceptionInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Nelmio\ApiDocBundle\Annotation\Model;
 use Nelmio\ApiDocBundle\Annotation\Security;
@@ -125,6 +126,27 @@ class ReservationController extends AbstractController
         }
 
         return $this->successNormalizer->success($reservation, 200);
+    }
+
+    /**
+     * @throws ExceptionInterface
+     */
+    #[Route('/reservations/{ref}', name: 'reservations.delete', methods: ['DELETE'])]
+    #[OA\Response(
+        response: 200,
+        description: 'Delete the reservation'
+    )]
+    #[OA\Tag(name: 'reservations')]
+    public function delete(Request $request, ValidatorInterface $validator, ReservationRepository $reservationRepository, string $ref): JsonResponse
+    {
+        $reservation = $reservationRepository->getReservationByRef($ref);
+        if (empty($reservation)) {
+            return $this->errorNormalizer->error("No reservation available", 404);
+        }
+
+        $reservationRepository->remove($reservation, true);
+
+        return $this->successNormalizer->success(['message' => 'Successful deleted'], 200);
     }
 
 }

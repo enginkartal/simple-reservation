@@ -4,6 +4,7 @@ namespace App\Repository;
 
 use App\Entity\Reservation;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -69,7 +70,19 @@ class ReservationRepository extends ServiceEntityRepository
             ->andWhere('r.ref = :val')
             ->setParameter('val', $ref)
             ->getQuery()
-            ->getArrayResult()
-        ;
+            ->getArrayResult();
+
+    }
+
+    /**
+     * @throws NonUniqueResultException
+     */
+    public function getReservationByRef($ref): ?Reservation
+    {
+        return $this->createQueryBuilder('r')
+            ->andWhere('r.ref = :val')
+            ->setParameter('val', $ref)
+            ->getQuery()
+            ->getOneOrNullResult();
     }
 }

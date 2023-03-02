@@ -14,9 +14,9 @@
 ```
 git clone https://github.com/enginkartal/simple-reservation
 
-docker-compose up -d --build
-
 composer install
+
+docker-compose up -d --build
 
 php bin/console doctrine:database:create
 
